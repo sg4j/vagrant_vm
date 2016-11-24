@@ -1,0 +1,9 @@
+# AlpineLinux with a glibc-2.21 and Oracle Java 8
+
+FROM sg/alpine-java8
+
+COPY springboot-ignite-1.0.jar /springboot-ignite-1.0.jar
+
+EXPOSE 8760
+
+CMD  ["java","-jar","springboot-ignite-1.0.jar","8760"]

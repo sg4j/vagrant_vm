@@ -1,0 +1,51 @@
+docker swarm init --listen-addr 172.47.7.14:2377
+docker swarm join 172.47.7.14:2377
+  
+docker network create -d overlay petnet
+
+#Which ports are listening
+netstat -ntlp | grep LISTEN
+
+#Which port is open
+nc -zv 172.47.7.14 80
+
+#IP Table
+iptables -L -n
+
+docker save -o <save image to path> <image name>
+docker load -i <path to image tar file>
+
+docker service create --replicas 2 --name mypet -p 80:8760/tcp --network petnet sg/sbtignite
+
+docker service inspect --pretty petclinic
+
+docker service tasks petclinic
+
+docker build -f Dockerfile.txt -t sg/sbtignite .
+
+docker logs {CONTAINER_ID} -f
+
+# Remove all containers
+	docker rm $(docker ps -a -q)
+
+#Remove all images
+	docker rmi $(docker images -q)
+
+#The following command helps you in removing all containers that are not running:
+#Be careful if you have data volume containers since they have "status=exited". This means that you'll lose all your data
+	docker rm `docker ps -aq --no-trunc --filter "status=exited"`
+
+#Now this removes all the dangling non intermediate <none> images:
+	docker rmi `docker images --filter 'dangling=true' -q --no-trunc`
+
+# View all containers
+docker ps -a
+
+#Restart a container that we stopped with all the parameters specified earlier
+docker start CONTAINER_ID or NAME
+
+http://172.47.7.15:80/petclinic/pet/id?id=2
+
+docker service scale petclinic=2
+
+sudo ufw allow from 172.47.7.15 to any port 2377

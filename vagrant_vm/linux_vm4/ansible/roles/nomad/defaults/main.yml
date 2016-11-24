@@ -1,0 +1,24 @@
+logs_dir: /data/consul/logs
+
+directories:
+  - /data/consul/data
+  - /data/consul/config
+  - /data/consul/ui
+  - "{{ logs_dir }}"
+
+files: [
+  { src: '/tmp', dest: '/usr/local/bin/', mode: '0755' }
+]
+
+consul_ubuntu_os_packages:
+ - unzip
+consul_zip_sha256: "abdf0e1856292468e2c9971420d73b805e93888e006c76324ae39416edcf0627"
+consul_ubuntu_sha256: "{{ consul_zip_sha256 }}"
+consul_extra: "-server -bootstrap"
+#consul_server_ip: "177.47.7.10"
+ip: "177.47.7.10"
+consul_version: "0.6.4"
+consul_ui_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_web_ui.zip"
+consul_ui_pkg: "{{ consul_version }}_web_ui.zip"
+consul_ubuntu_pkg: "{{ consul_version }}_linux_amd64.zip"
+consul_zip_url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"

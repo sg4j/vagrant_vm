@@ -1,0 +1,54 @@
+- name: Directories are created
+  sudo: True
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items: directories
+  tags: [consul]
+
+- name: OS Packages
+  sudo: True
+  apt: "name={{ item }} state=present update_cache=yes"
+  with_items: consul_ubuntu_os_packages
+  tags: [consul]
+
+- name: Download Consul
+  sudo: True
+  get_url: "url={{ consul_zip_url }} dest=/tmp/consul_{{ consul_ubuntu_pkg }} sha256sum={{ consul_ubuntu_sha256 }} timeout=74"
+  tags: [consul]
+
+- name: Unzip Consul
+  unarchive: "copy=no src=/tmp/consul_{{ consul_ubuntu_pkg }} dest=/tmp"
+  tags: installation
+  
+- name: Files are copied
+  sudo: True
+  copy:
+    src: "{{ item.src }}/consul"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items: files
+  tags: [consul]
+
+- name: Cleanup
+  sudo: True
+  shell: "rm -rf /tmp/consul_{{ consul_ubuntu_pkg }}"
+  tags: [consul]
+  
+- name: Is running
+  sudo: True
+  shell: "nohup consul agent {{ consul_extra }} \
+    -data-dir /data/consul/data \
+    -config-dir /data/consul/config \
+    -node dev2 \
+    -ui \
+    -bind={{ ip }} \
+    -client=0.0.0.0 \
+    >{{ logs_dir }}/consul.log 2>&1 &"
+  tags: [consul]
+
+- name: Has joined
+  sudo: True
+  shell: consul join {{ consul_server_ip }}
+  when: consul_server_ip is defined
+  tags: [consul]

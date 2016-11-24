@@ -1,0 +1,9 @@
+# AlpineLinux with a glibc-2.21 and Oracle Java 8
+
+FROM sg/alpine-java8
+
+COPY springboot-eureka-server-1.0.jar /springboot-eureka-server-1.0.jar
+
+EXPOSE 8761
+
+CMD  ["java","-jar","springboot-eureka-server-1.0.jar"]
